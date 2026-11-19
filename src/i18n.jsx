@@ -200,6 +200,8 @@ const D = {
   "Admin": ["Админ", "Admin"],
   "Ishchi": ["Работник", "Worker"],
   "Siz": ["Вы", "You"],
+  "Ism yoki telefon bo'yicha qidirish...": ["Поиск по имени или телефону...", "Search by name or phone..."],
+  "{0} ta mijoz": ["Клиентов: {0}", "{0} customers"],
   "kun": ["дн.", "days"],
   "Bir kunda bajarildi": ["Выполнено за один день", "Done in one day"],
   "Bajarilish vaqti: {0} kun": ["Время выполнения: {0} дн.", "Time taken: {0} days"],
