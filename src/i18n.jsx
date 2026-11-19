@@ -200,6 +200,7 @@ const D = {
   "Admin": ["Админ", "Admin"],
   "Ishchi": ["Работник", "Worker"],
   "Siz": ["Вы", "You"],
+  "kun": ["дн.", "days"],
   "Bir kunda bajarildi": ["Выполнено за один день", "Done in one day"],
   "Bajarilish vaqti: {0} kun": ["Время выполнения: {0} дн.", "Time taken: {0} days"],
   "O'rtacha: {0} kun": ["В среднем: {0} дн.", "Average: {0} days"],

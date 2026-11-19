@@ -14,6 +14,23 @@ export default function Archive({ data, isAdmin, username }) {
   const [form, setForm] = useState(null);
   const [confirm, setConfirm] = useState(null);
   const [bigImg, setBigImg] = useState(null);
+  // Kichraytirish: hamma karta (saqlanadi) va har bir karta alohida.
+  const [allSmall, setAllSmall] = useState(() => {
+    try {
+      return localStorage.getItem("ish-kuzatuv-arch-compact") === "1";
+    } catch (e) {
+      return false;
+    }
+  });
+  const [own, setOwn] = useState({}); // id -> true/false (shu kartaning o'z tanlovi)
+  const toggleAll = () => {
+    const v = !allSmall;
+    setAllSmall(v);
+    setOwn({});
+    try {
+      localStorage.setItem("ish-kuzatuv-arch-compact", v ? "1" : "0");
+    } catch (e) {}
+  };
 
   const query = q.trim().toLowerCase();
   const list = jobs
@@ -57,6 +74,9 @@ export default function Archive({ data, isAdmin, username }) {
           {t("{0} ta ish", total)}
           {avg !== null && " · " + t("O'rtacha: {0} kun", avg)}
         </span>
+        <button className="btn" onClick={toggleAll} title={allSmall ? t("Hamma ishni kattalashtirish") : t("Hamma ishni kichraytirish")}>
+          {allSmall ? t("⤢ Kattalashtirish") : t("⤡ Kichraytirish")}
+        </button>
       </div>
 
       {list.length === 0 && (
@@ -71,9 +91,30 @@ export default function Archive({ data, isAdmin, username }) {
         {list.map((j) => {
           const debt = debtOf(j);
           const meta = [j.material, j.thick ? j.thick + " mm" : "", j.dims].filter(Boolean).join(" · ");
+          const small = own[j.id] === undefined ? allSmall : own[j.id];
+          if (small)
+            return (
+              <div className="card mini" key={j.id + "-c"}>
+                <div className="txt">
+                  <div className="title">{j.title}</div>
+                  <div className="cust">
+                    {[j.customer, t("Tugagan: {0}", j.done || "—"), daysTaken(j) !== null ? "⏱ " + daysTaken(j) + " " + t("kun") : ""]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </div>
+                </div>
+                {!canEdit(j, isAdmin, username) && <span title={t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}>🔒</span>}
+                <button className="ic" aria-label={t("Kattalashtirish")} title={t("Kattalashtirish")} onClick={() => setOwn({ ...own, [j.id]: false })}>
+                  +
+                </button>
+              </div>
+            );
           return (
             <div className="card" key={j.id}>
               <div className="row1">
+                <button className="ic shrink" aria-label={t("Kichraytirish")} title={t("Kichraytirish")} onClick={() => setOwn({ ...own, [j.id]: true })}>
+                  –
+                </button>
                 <span className="tag">{j.parts} ta detal</span>
                 {j.area > 0 && <span>{fmtArea(j.area)} m²</span>}
                 <span style={{ marginLeft: "auto" }}>{t("Tugagan: {0}", j.done || "—")}</span>
