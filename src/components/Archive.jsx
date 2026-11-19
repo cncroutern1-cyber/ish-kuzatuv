@@ -3,11 +3,11 @@ import Page from "./Page.jsx";
 import JobForm from "./JobForm.jsx";
 import ConfirmDialog from "./ConfirmDialog.jsx";
 import Icon from "./Icons.jsx";
-import { fmt, fmtArea, debtOf } from "../utils.js";
+import { fmt, fmtArea, debtOf, canEdit } from "../utils.js";
 import { useT } from "../i18n.jsx";
 
 // Finished jobs: ticked off in the "Tayyor" column. Can be restored, edited or (admin) deleted.
-export default function Archive({ data, isAdmin }) {
+export default function Archive({ data, isAdmin, username }) {
   const t = useT();
   const { jobs, customers, saveJob, removeJob, savePhone } = data;
   const [q, setQ] = useState("");
@@ -87,6 +87,9 @@ export default function Archive({ data, isAdmin }) {
                   {debt > 0 ? <span className="chip red">Qarz: {fmt(debt)}</span> : <span className="chip grn">{t("To'langan")}</span>}
                 </div>
               )}
+              {!canEdit(j, isAdmin, username) ? (
+                <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy)}</div>
+              ) : (
               <div className="acts">
                 <button className="ic" onClick={() => restore(j)} title={t("Tayyor ustuniga qaytarish")}>
                   <Icon name="left" /> {t("Qaytarish")}
@@ -101,6 +104,7 @@ export default function Archive({ data, isAdmin }) {
                   </button>
                 )}
               </div>
+              )}
             </div>
           );
         })}
@@ -111,6 +115,7 @@ export default function Archive({ data, isAdmin }) {
           key={form.job.id}
           job={form.job}
           isAdmin={isAdmin}
+          username={username}
           customers={customers}
           onSave={onSave}
           onDelete={ask}

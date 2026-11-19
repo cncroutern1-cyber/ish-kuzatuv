@@ -200,6 +200,7 @@ const D = {
   "Admin": ["Админ", "Admin"],
   "Ishchi": ["Работник", "Worker"],
   "Siz": ["Вы", "You"],
+  "Faqat {0} o'zgartira oladi": ["Только {0} может изменять", "Only {0} can edit"],
   "Parolni o'zgartirish": ["Сменить пароль", "Change password"],
   "Yangi parol (kamida 6 belgi)": ["Новый пароль (минимум 6 символов)", "New password (min. 6 characters)"],
   "Yangi parol": ["Новый пароль", "New password"],

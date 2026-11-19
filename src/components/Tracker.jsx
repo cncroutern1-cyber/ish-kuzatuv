@@ -91,8 +91,8 @@ export default function Tracker({ isAdmin, username }) {
         </div>
       </header>
 
-      {page === "ishlar" && <Jobs data={data} isAdmin={isAdmin} />}
-      {page === "tugatilgan" && <Archive data={data} isAdmin={isAdmin} />}
+      {page === "ishlar" && <Jobs data={data} isAdmin={isAdmin} username={username} />}
+      {page === "tugatilgan" && <Archive data={data} isAdmin={isAdmin} username={username} />}
       {page === "mijozlar" && <Customers jobs={jobs} customers={customers} isAdmin={isAdmin} onPhone={data.savePhone} />}
       {page === "hisobot" && isAdmin && (
         <Report jobs={jobs} customers={customers} onRestore={data.restore} onWipe={data.wipe} />

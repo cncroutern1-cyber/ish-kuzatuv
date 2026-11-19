@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { STAGES, fmt, debtOf, todayStr } from "../utils.js";
+import { STAGES, fmt, debtOf, todayStr, canEdit } from "../utils.js";
 import Card from "./Card.jsx";
 import JobForm from "./JobForm.jsx";
 import ConfirmDialog from "./ConfirmDialog.jsx";
 import { useT } from "../i18n.jsx";
 
 // The main page: search, sort, "+ Yangi ish" and the four-column board.
-export default function Jobs({ data, isAdmin }) {
+export default function Jobs({ data, isAdmin, username }) {
   const t = useT();
   const { jobs, customers, materialPrices, saveMaterialPrice, saveJob, removeJob, removeMany, savePhone, reorder } = data;
   const [q, setQ] = useState("");
@@ -36,6 +36,7 @@ export default function Jobs({ data, isAdmin }) {
   const query = q.trim().toLowerCase();
 
   function act(j, a) {
+    if (["next", "back", "finish", "up", "down", "edit", "del"].includes(a) && !canEdit(j, isAdmin, username)) return;
     if (a === "next" && j.stage < 3) {
       const s = j.stage + 1;
       saveJob({ ...j, stage: s, done: s === 3 ? todayStr() : "", pos: Date.now() });
@@ -130,6 +131,7 @@ export default function Jobs({ data, isAdmin }) {
                     count={items.length}
                     sortByDue={sortByDue}
                     isAdmin={isAdmin}
+                    locked={!canEdit(j, isAdmin, username)}
                     act={act}
                   />
                 ))}
@@ -144,6 +146,7 @@ export default function Jobs({ data, isAdmin }) {
           key={form.job ? form.job.id : "new"}
           job={form.job}
           isAdmin={isAdmin}
+          username={username}
           customers={customers}
           materialPrices={materialPrices}
           onSaveMaterialPrice={saveMaterialPrice}

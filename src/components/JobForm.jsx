@@ -7,7 +7,7 @@ import { sb } from "../supabase.js";
 
 const MATERIALS = ["LDSP", "MDF", "Massiv", "Fanera"];
 
-export default function JobForm({ job, isAdmin, customers, materialPrices = {}, onSaveMaterialPrice, onSave, onDelete, onClose }) {
+export default function JobForm({ job, isAdmin, username, customers, materialPrices = {}, onSaveMaterialPrice, onSave, onDelete, onClose }) {
   const t = useT();
   // Older jobs may have only a typed-in price: they open in "manual" mode so the price is never lost.
   const legacy = !!job && (job.price || 0) > 0 && !(job.rate > 0);
@@ -104,6 +104,7 @@ export default function JobForm({ job, isAdmin, customers, materialPrices = {}, 
       price: 0,
       advance: 0,
       pos: Date.now(),
+      createdBy: username || "",
     };
     let j = {
       ...base,

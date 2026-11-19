@@ -41,6 +41,9 @@ export const COLORS = [
 
 export const fmtArea = (n) => String(Math.round((n || 0) * 100) / 100);
 
+// Admin hamma ishni tahrirlaydi; ishchi faqat o'zi qo'shgan ishni (egasi yo'q eski ishlar ham ochiq).
+export const canEdit = (j, isAdmin, username) => isAdmin || !j.createdBy || j.createdBy === username;
+
 export const debtOf = (j) => Math.max(0, (j.price || 0) - (j.advance || 0));
 
 export const sortJobs = (list) => list.slice().sort((a, b) => a.pos - b.pos);
@@ -70,6 +73,7 @@ export function toRow(j) {
     ...(j.color || j.hadColor ? { color: j.color || "" } : {}),
     ...(j.filePath || j.hadFile ? { file_name: j.fileName || "", file_path: j.filePath || "" } : {}),
     ...(j.priceMode || j.hadMode ? { price_mode: j.priceMode || "", lists: j.lists || 0 } : {}),
+    ...(j.createdBy || j.hadBy ? { created_by: j.createdBy || null } : {}),
     ...(j.rate > 0 || j.hadRate ? { rate: j.rate || 0 } : {}),
     ...(j.matOurs || j.hadMat ? { mat_ours: !!j.matOurs } : {}),
     ...(j.matPrice > 0 || j.hadMat ? { mat_price: j.matPrice || 0 } : {}),
@@ -99,6 +103,8 @@ export function fromRow(r) {
     matOurs: !!r.mat_ours,
     matPrice: Number(r.mat_price) || 0,
     hadMat: "mat_ours" in r,
+    createdBy: r.created_by || "",
+    hadBy: "created_by" in r,
   };
 }
 

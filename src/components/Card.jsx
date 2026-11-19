@@ -4,7 +4,7 @@ import { PAYN, fmt, fmtArea, daysLeft, payState, debtOf } from "../utils.js";
 import Icon from "./Icons.jsx";
 import { useT } from "../i18n.jsx";
 
-export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact }) {
+export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact, locked }) {
   const t = useT();
   const [own, setOwn] = useState(null);
   const small = own === null ? !!compact : own;
@@ -45,7 +45,8 @@ export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact }
           <div className="cust">{[j.customer, j.area > 0 ? fmtArea(j.area) + " m²" : ""].filter(Boolean).join(" · ") || "—"}</div>
         </div>
         {late && <span className="chip red">!</span>}
-        {j.stage < 3 && (
+        {locked && <span title={t("Faqat {0} o'zgartira oladi", j.createdBy)}>🔒</span>}
+        {!locked && j.stage < 3 && (
           <button className="ic go" aria-label={t("Keyingi bosqich")} title={t("Keyingi bosqich")} onClick={() => act(j, "next")}>
             <Icon name="right" />
           </button>
@@ -91,6 +92,17 @@ export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact }
           {moneyChip}
         </div>
       )}
+      {locked && <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy)}</div>}
+      {!locked && j.createdBy && !small && <div className="meta ownmsg">{j.createdBy}</div>}
+      {locked ? (
+        j.stage === 3 && (
+          <div className="acts">
+            <button className="ic" title={t("Telegram orqali xabar")} aria-label={t("Telegram xabar")} onClick={() => act(j, "tg")}>
+              <Icon name="send" size={14} /> {t("Xabar")}
+            </button>
+          </div>
+        )
+      ) : (
       <div className="acts">
         <button className="ic" disabled={j.stage === 0} aria-label={t("Orqaga")} title={t("Orqaga")} onClick={() => act(j, "back")}>
           <Icon name="left" />
@@ -136,6 +148,7 @@ export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact }
           </button>
         )}
       </div>
+      )}
     </div>
   );
 }
