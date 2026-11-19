@@ -311,3 +311,4 @@ header,.toolbar,main,.page{padding-left:max(20px,env(safe-area-inset-left,0px));
 .col h2 .colbtn{margin-left:auto;min-width:28px;height:26px;padding:0 6px;font-size:14px}
 .lockmsg{color:#8a5a00;font-weight:600}
 .ownmsg{color:var(--mute);font-size:12px}
+.dimrow{display:flex;gap:8px}.dimrow input{flex:1;min-width:0}.dimrow select{width:76px;flex:none}.hint{font-size:12px;color:var(--mute);margin-top:4px}.linkbtn{border:0;background:none;color:var(--accent);cursor:pointer;padding:0;font:inherit;text-decoration:underline}

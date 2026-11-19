@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal.jsx";
 import { STAGE_NAMES, uid, todayStr, resizeImg, fmt, fmtArea, COLORS } from "../utils.js";
 import { useT } from "../i18n.jsx";
@@ -38,6 +38,24 @@ export default function JobForm({ job, isAdmin, username, customers, materialPri
   });
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }));
   const names = Object.keys(customers);
+
+  // O'lcham yozilsa kvadrat avtomatik hisoblanadi: eni × bo'yi × detallar soni. Kvadratni qo'lda o'zgartirsangiz, avtomatik hisob to'xtaydi.
+  const [unit, setUnit] = useState(() => {
+    try {
+      return localStorage.getItem("ish-kuzatuv-unit") || "mm";
+    } catch (e) {
+      return "mm";
+    }
+  });
+  const [areaManual, setAreaManual] = useState(!!(job && job.area > 0));
+  const UNIT = { mm: 1e-3, sm: 1e-2, m: 1 };
+  const dimNums = (f.dims.match(/\d+(?:[.,]\d+)?/g) || []).map((x) => parseFloat(x.replace(",", ".")));
+  const oneArea = dimNums.length >= 2 ? dimNums[0] * dimNums[1] * UNIT[unit] * UNIT[unit] : 0;
+  const partsN = Math.max(1, parseInt(f.parts) || 1);
+  const autoArea = oneArea > 0 ? Math.round(oneArea * partsN * 1000) / 1000 : 0;
+  useEffect(() => {
+    if (!areaManual) setF((s) => (String(s.area) === (autoArea ? String(autoArea) : "") ? s : { ...s, area: autoArea ? String(autoArea) : "" }));
+  }, [autoArea, areaManual]);
 
   // --- Price: service (by m² or by sheet) + material (only if we supply it) - advance ---
   const areaN = parseFloat(f.area) || 0;
@@ -168,12 +186,41 @@ export default function JobForm({ job, isAdmin, username, customers, materialPri
         </div>
         <div className="f">
           <label htmlFor="fArea">{t("Detallar kvadrati (m²)")}</label>
-          <input id="fArea" type="number" min="0" step="0.01" inputMode="decimal" value={f.area} onChange={set("area")} placeholder="0" />
+          <input id="fArea" type="number" min="0" step="0.01" inputMode="decimal" value={f.area} onChange={(e) => { setAreaManual(e.target.value !== ""); set("area")(e); }} placeholder="0" />
         </div>
       </div>
       <div className="f">
         <label htmlFor="fDims">{t("O'lcham")}</label>
-        <input id="fDims" type="text" value={f.dims} onChange={set("dims")} placeholder={t("Masalan: 2100×600")} />
+        <div className="dimrow">
+          <input id="fDims" type="text" value={f.dims} onChange={set("dims")} placeholder={t("Masalan: 2100×600")} />
+          <select
+            aria-label={t("O'lcham birligi")}
+            value={unit}
+            onChange={(e) => {
+              setUnit(e.target.value);
+              try {
+                localStorage.setItem("ish-kuzatuv-unit", e.target.value);
+              } catch (x) {}
+            }}
+          >
+            <option value="mm">mm</option>
+            <option value="sm">sm</option>
+            <option value="m">m</option>
+          </select>
+        </div>
+        {oneArea > 0 && (
+          <div className="hint">
+            {t("1 detal")}: {fmtArea(oneArea)} m²{partsN > 1 ? ` × ${partsN} = ${fmtArea(oneArea * partsN)} m²` : ""}
+            {areaManual && Math.abs(autoArea - areaN) > 0.0005 && (
+              <>
+                {" · "}
+                <button type="button" className="linkbtn" onClick={() => { setAreaManual(false); }}>
+                  {t("Avtomatik hisobga qaytish")}
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <h4 className="fsec">{t("Material")}</h4>
