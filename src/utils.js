@@ -25,6 +25,10 @@ export const todayStr = () => {
 export const daysLeft = (due) =>
   Math.round((new Date(due + "T00:00:00") - new Date(todayStr() + "T00:00:00")) / 864e5);
 
+// Ish qo'shilgandan tugatilgunicha o'tgan kunlar (sana bo'yicha).
+export const daysTaken = (j) =>
+  j.created && j.done ? Math.max(0, Math.round((new Date(j.done + "T00:00:00") - new Date(j.created + "T00:00:00")) / 864e5)) : null;
+
 export const payState = (j) =>
   j.price > 0 ? (j.advance >= j.price ? 2 : j.advance > 0 ? 1 : 0) : j.advance > 0 ? 1 : 0;
 

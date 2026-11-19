@@ -3,7 +3,7 @@ import Page from "./Page.jsx";
 import JobForm from "./JobForm.jsx";
 import ConfirmDialog from "./ConfirmDialog.jsx";
 import Icon from "./Icons.jsx";
-import { fmt, fmtArea, debtOf, canEdit } from "../utils.js";
+import { fmt, fmtArea, debtOf, canEdit, daysTaken } from "../utils.js";
 import { useT } from "../i18n.jsx";
 
 // Finished jobs: ticked off in the "Tayyor" column. Can be restored, edited or (admin) deleted.
@@ -21,6 +21,8 @@ export default function Archive({ data, isAdmin, username }) {
     .filter((j) => !query || (j.title + " " + j.customer + " " + (j.material || "")).toLowerCase().includes(query))
     .sort((a, b) => (b.done || "").localeCompare(a.done || "") || b.pos - a.pos);
   const total = jobs.filter((j) => j.stage === 4).length;
+  const days = jobs.filter((j) => j.stage === 4).map(daysTaken).filter((d) => d !== null);
+  const avg = days.length ? Math.round((days.reduce((a, b) => a + b, 0) / days.length) * 10) / 10 : null;
 
   function restore(j) {
     saveJob({ ...j, stage: 3, pos: Date.now() });
@@ -51,7 +53,10 @@ export default function Archive({ data, isAdmin, username }) {
     <Page title={t("Tugatilgan ishlar")}>
       <div className="arch-bar">
         <input type="search" placeholder={t("Qidirish...")} aria-label={t("Qidirish")} value={q} onChange={(e) => setQ(e.target.value)} />
-        <span className="arch-count">{t("{0} ta ish", total)}</span>
+        <span className="arch-count">
+          {t("{0} ta ish", total)}
+          {avg !== null && " · " + t("O'rtacha: {0} kun", avg)}
+        </span>
       </div>
 
       {list.length === 0 && (
@@ -81,6 +86,14 @@ export default function Archive({ data, isAdmin, username }) {
                 {j.img && <img className="thumb" src={j.img} alt={t("Rasm")} onClick={() => setBigImg(j.img)} />}
               </div>
               {meta && <div className="meta">{meta}</div>}
+              {daysTaken(j) !== null && (
+                <div className="chips">
+                  <span className="chip">
+                    ⏱ {daysTaken(j) === 0 ? t("Bir kunda bajarildi") : t("Bajarilish vaqti: {0} kun", daysTaken(j))}
+                  </span>
+                  <span className="chip">{j.created} → {j.done}</span>
+                </div>
+              )}
               {j.note && <div className="meta">{j.note}</div>}
               {isAdmin && j.price > 0 && (
                 <div className="chips">
