@@ -45,7 +45,7 @@ export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact, 
           <div className="cust">{[j.customer, j.area > 0 ? fmtArea(j.area) + " m²" : ""].filter(Boolean).join(" · ") || "—"}</div>
         </div>
         {late && <span className="chip red">!</span>}
-        {locked && <span title={t("Faqat {0} o'zgartira oladi", j.createdBy)}>🔒</span>}
+        {locked && <span title={t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}>🔒</span>}
         {!locked && j.stage < 3 && (
           <button className="ic go" aria-label={t("Keyingi bosqich")} title={t("Keyingi bosqich")} onClick={() => act(j, "next")}>
             <Icon name="right" />
@@ -92,7 +92,7 @@ export default function Card({ j, idx, count, sortByDue, isAdmin, act, compact, 
           {moneyChip}
         </div>
       )}
-      {locked && <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy)}</div>}
+      {locked && <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}</div>}
       {!locked && j.createdBy && !small && <div className="meta ownmsg">{j.createdBy}</div>}
       {locked ? (
         j.stage === 3 && (

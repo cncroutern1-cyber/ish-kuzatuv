@@ -41,8 +41,8 @@ export const COLORS = [
 
 export const fmtArea = (n) => String(Math.round((n || 0) * 100) / 100);
 
-// Admin hamma ishni tahrirlaydi; ishchi faqat o'zi qo'shgan ishni (egasi yo'q eski ishlar ham ochiq).
-export const canEdit = (j, isAdmin, username) => isAdmin || !j.createdBy || j.createdBy === username;
+// Admin hamma ishni tahrirlaydi; ishchi faqat o'zi qo'shgan ishni (egasi yozilmagan eski ishlar faqat admin uchun).
+export const canEdit = (j, isAdmin, username) => isAdmin || (!!j.createdBy && j.createdBy === username);
 
 export const debtOf = (j) => Math.max(0, (j.price || 0) - (j.advance || 0));
 

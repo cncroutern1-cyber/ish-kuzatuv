@@ -88,7 +88,7 @@ export default function Archive({ data, isAdmin, username }) {
                 </div>
               )}
               {!canEdit(j, isAdmin, username) ? (
-                <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy)}</div>
+                <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}</div>
               ) : (
               <div className="acts">
                 <button className="ic" onClick={() => restore(j)} title={t("Tayyor ustuniga qaytarish")}>

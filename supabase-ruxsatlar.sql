@@ -1,5 +1,5 @@
 -- Supabase -> SQL Editor -> New query: butun matnni qo'yib "Run" bosing.
--- Ishchi faqat o'zi qo'shgan ishni o'zgartira/o'chira oladi. Admin hamma ishni. Egasi yo'q eski ishlar hamma uchun ochiq.
+-- Ishchi faqat o'zi qo'shgan ishni o'zgartira/o'chira oladi. Admin hamma ishni. Egasi yozilmagan eski ishlarni faqat admin o'zgartiradi.
 -- (Ilovaning o'zida ham shu qoida bor; bu fayl uni ma'lumotlar bazasi darajasida ham majburiy qiladi.)
 
 alter table public.jobs add column if not exists created_by text;
@@ -22,9 +22,9 @@ drop policy if exists "jobs_delete" on public.jobs;
 
 create policy "jobs_select" on public.jobs for select to authenticated using (true);
 create policy "jobs_insert" on public.jobs for insert to authenticated
-  with check (public.me_is_admin() or created_by is null or created_by = public.me_username());
+  with check (public.me_is_admin() or created_by = public.me_username());
 create policy "jobs_update" on public.jobs for update to authenticated
-  using (public.me_is_admin() or created_by is null or created_by = public.me_username())
-  with check (public.me_is_admin() or created_by is null or created_by = public.me_username());
+  using (public.me_is_admin() or created_by = public.me_username())
+  with check (public.me_is_admin() or created_by = public.me_username());
 create policy "jobs_delete" on public.jobs for delete to authenticated
-  using (public.me_is_admin() or created_by is null or created_by = public.me_username());
+  using (public.me_is_admin() or created_by = public.me_username());
