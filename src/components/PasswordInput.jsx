@@ -3,7 +3,7 @@ import Icon from "./Icons.jsx";
 import { useT } from "../i18n.jsx";
 
 // Password field with an eye button to show or hide what is typed.
-export default function PasswordInput({ id, value, onChange, placeholder, autoComplete, autoFocus, ariaLabel }) {
+export default function PasswordInput({ id, value, onChange, placeholder, autoComplete, autoFocus, ariaLabel, inputRef, onKeyDown, onKeyUp, onBlur, invalid }) {
   const t = useT();
   const [show, setShow] = useState(false);
   return (
@@ -17,6 +17,11 @@ export default function PasswordInput({ id, value, onChange, placeholder, autoCo
         autoComplete={autoComplete}
         autoFocus={autoFocus}
         aria-label={ariaLabel}
+        ref={inputRef}
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
+        onBlur={onBlur}
+        aria-invalid={invalid || undefined}
       />
       <button
         type="button"
