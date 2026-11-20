@@ -22,7 +22,20 @@ export default function Archive({ data, isAdmin, username }) {
       return false;
     }
   });
-  const [own, setOwn] = useState({}); // id -> true/false (shu kartaning o'z tanlovi)
+  // id -> true/false (shu kartaning o'z tanlovi), qayta yuklanganda ham saqlanadi.
+  const [own, setOwnState] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("ish-kuzatuv-arch-own") || "{}");
+    } catch (e) {
+      return {};
+    }
+  });
+  const setOwn = (v) => {
+    setOwnState(v);
+    try {
+      localStorage.setItem("ish-kuzatuv-arch-own", JSON.stringify(v));
+    } catch (e) {}
+  };
   const toggleAll = () => {
     const v = !allSmall;
     setAllSmall(v);
@@ -103,6 +116,7 @@ export default function Archive({ data, isAdmin, username }) {
                       .join(" · ")}
                   </div>
                 </div>
+                {isAdmin && debt > 0 && <span className="chip red">{t("Qarz: {0}", fmt(debt))}</span>}
                 {!canEdit(j, isAdmin, username) && <span title={t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}>🔒</span>}
                 <button className="ic" aria-label={t("Kattalashtirish")} title={t("Kattalashtirish")} onClick={() => setOwn({ ...own, [j.id]: false })}>
                   +
