@@ -37,6 +37,8 @@ const D = {
   "Tanlang...": ["Выберите...", "Select..."],
   "Parol": ["Пароль", "Password"],
   "Kirish": ["Войти", "Sign in"],
+  "{0} ta ish kechikdi": ["Просрочено работ: {0}", "{0} jobs overdue"],
+  "Xodimlar": ["Сотрудники", "Staff"],
   "Kim kirmoqda?": ["Кто входит?", "Who's signing in?"],
   "{0} uchun parol": ["Пароль для {0}", "Password for {0}"],
   "Caps Lock yoqilgan": ["Включён Caps Lock", "Caps Lock is on"],

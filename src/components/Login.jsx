@@ -4,6 +4,7 @@ import { FALLBACK_USERS } from "../utils.js";
 import PasswordInput from "./PasswordInput.jsx";
 import { useT } from "../i18n.jsx";
 import LangSwitch from "./LangSwitch.jsx";
+import Mark from "./Mark.jsx";
 
 // Carved-wood lattice, drawn in SVG so the page needs no image file.
 const ORNAMENT = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'>
@@ -24,20 +25,6 @@ const GOLD = ORNAMENT.replace("<rect width='120' height='120' fill='#e8dac3'/>",
 const GOLD_PATTERN = `url("data:image/svg+xml,${encodeURIComponent(GOLD)}")`;
 const LAST = "ish-kuzatuv-last-user";
 
-// Round carved rosette used as the app mark.
-function Mark({ size = 44 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
-      <circle cx="24" cy="24" r="23" fill="#c9a227" />
-      <g fill="none" stroke="#2b1d12" strokeWidth="1.8" strokeLinejoin="round">
-        <path d="M24 6L42 24 24 42 6 24Z" />
-        <circle cx="24" cy="24" r="10" />
-        <path d="M24 14l7 3 3 7-3 7-7 3-7-3-3-7 3-7Z" />
-      </g>
-      <circle cx="24" cy="24" r="3" fill="#2b1d12" />
-    </svg>
-  );
-}
 
 const initials = (n) =>
   (n || "?")

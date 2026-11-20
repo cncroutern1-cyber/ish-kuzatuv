@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sb } from "../supabase.js";
 import { useData } from "../useData.js";
 import { usePresence } from "../usePresence.js";
@@ -11,18 +11,28 @@ import Users from "./Users.jsx";
 import { useT } from "../i18n.jsx";
 import Icon from "./Icons.jsx";
 import LangSwitch from "./LangSwitch.jsx";
+import Mark from "./Mark.jsx";
+import { daysLeft } from "../utils.js";
 
 const PAGES = [
-  { id: "ishlar", label: "Ishlar" },
-  { id: "tugatilgan", label: "Tugatilgan ishlar" },
-  { id: "mijozlar", label: "Mijozlar" },
-  { id: "hisobot", label: "Hisobot", admin: true },
-  { id: "foydalanuvchilar", label: "Foydalanuvchilar", admin: true },
+  { id: "ishlar", label: "Ishlar", icon: "board" },
+  { id: "tugatilgan", label: "Tugatilgan ishlar", short: "Tugatilgan", icon: "done" },
+  { id: "mijozlar", label: "Mijozlar", icon: "people" },
+  { id: "hisobot", label: "Hisobot", icon: "chart", admin: true },
+  { id: "foydalanuvchilar", label: "Foydalanuvchilar", short: "Xodimlar", icon: "shield", admin: true },
 ];
 
 // Pages have their own address: /mijozlar, /hisobot ... ("/" is the jobs board).
 // The Claude preview can only use #addresses, so its build sets VITE_HASH_ROUTER.
 const HASH = import.meta.env.VITE_HASH_ROUTER === "1";
+const initials = (n) =>
+  (n || "?")
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
 const fromUrl = () =>
   HASH ? window.location.hash.replace("#", "") : decodeURI(window.location.pathname).replace(/^\/+|\/+$/g, "");
 const goTo = (id, replace) => {
@@ -78,39 +88,69 @@ export default function Tracker({ isAdmin, username }) {
   const { status, jobs, customers } = data;
   const statusText = status.text.startsWith("Xato: ") ? t("Xato") + status.text.slice(4) : t(status.text);
 
+  // Numbers on the tabs: jobs still in work (red when one is late), finished jobs, customers.
+  const active = jobs.filter((j) => j.stage < 4);
+  const late = active.filter((j) => j.stage < 3 && j.due && daysLeft(j.due) < 0).length;
+  const custCount = new Set([...Object.keys(customers), ...jobs.map((j) => (j.customer || "").trim()).filter(Boolean)]).size;
+  const badge = {
+    ishlar: active.length ? { n: active.length, red: late > 0, title: late ? t("{0} ta ish kechikdi", late) : "" } : null,
+    tugatilgan: jobs.length - active.length ? { n: jobs.length - active.length } : null,
+    mijozlar: custCount ? { n: custCount } : null,
+  };
+  const tone = status.err ? "err" : status.text === "Yuklanmoqda..." ? "busy" : "ok";
+  const others = online.filter((n) => n !== username);
+
+  const tabsFor = (cls) =>
+    pages.map((p) => {
+      const b = badge[p.id];
+      return (
+        <button
+          key={p.id}
+          className={cls + (page === p.id ? " on" : "")}
+          aria-current={page === p.id ? "page" : undefined}
+          onClick={() => open(p.id)}
+          title={t(p.label)}
+        >
+          <Icon name={p.icon} size={17} />
+          <span className="lbl">{t(cls === "btab" && p.short ? p.short : p.label)}</span>
+          {b && (
+            <span className={"cnt" + (b.red ? " red" : "")} title={b.title || undefined}>
+              {b.n > 99 ? "99+" : b.n}
+            </span>
+          )}
+        </button>
+      );
+    });
+
   return (
     <>
-      <header>
-        <div className="brand">
-          <div className="brand-top">
-            <span>{t("Ish kuzatuv")}</span>
-            <button className="logout" onClick={logout} title={t("Chiqish")}>
-              <Icon name="logout" size={13} />
-              {t("Chiqish")}
-            </button>
-          </div>
-          <small>
-            {username} · <span className={"status" + (status.err ? " err" : "")}>{statusText}</span>
-          </small>
+      <header className="topbar">
+        <div className="tb-brand">
+          <Mark size={30} />
+          <span className="tb-name">{t("Ish kuzatuv")}</span>
         </div>
+
         <nav className="tabs" aria-label={t("Sahifalar")}>
-          {pages.map((p) => (
-            <button
-              key={p.id}
-              className={"tab" + (page === p.id ? " on" : "")}
-              aria-current={page === p.id ? "page" : undefined}
-              onClick={() => open(p.id)}
-            >
-              {t(p.label)}
-            </button>
-          ))}
+          {tabsFor("tab")}
         </nav>
-        <div className="hright">
-          <div className="online" title={t("Hozir tizimda")}>
-            <i className="dot d2" />
-            {t("Onlayn: {0}", online.length ? online.join(", ") : username)}
-          </div>
-          <LangSwitch />
+
+        <div className="tb-right">
+          <span className={"sync " + tone} title={statusText} role="status">
+            <i />
+            <span className="sync-txt">{statusText}</span>
+          </span>
+          {others.length > 0 && (
+            <div className="faces" title={t("Hozir tizimda") + ": " + online.join(", ")}>
+              {others.slice(0, 3).map((n) => (
+                <span key={n} className="face">
+                  {initials(n)}
+                </span>
+              ))}
+              {others.length > 3 && <span className="face more">+{others.length - 3}</span>}
+            </div>
+          )}
+          <LangSwitch className="tb-lang" />
+          <UserMenu username={username} isAdmin={isAdmin} online={online} onLogout={logout} />
         </div>
       </header>
 
@@ -121,6 +161,10 @@ export default function Tracker({ isAdmin, username }) {
         <Report jobs={jobs} customers={customers} onRestore={data.restore} onWipe={data.wipe} />
       )}
       {page === "foydalanuvchilar" && isAdmin && <Users me={username} />}
+
+      <nav className="bottombar" aria-label={t("Sahifalar")}>
+        {tabsFor("btab")}
+      </nav>
 
       {confirm && (
         <ConfirmDialog
@@ -133,5 +177,69 @@ export default function Tracker({ isAdmin, username }) {
         />
       )}
     </>
+  );
+}
+
+// Avatar button with a small menu: who you are, who else is online, language (on phones), log out.
+function UserMenu({ username, isAdmin, online, onLogout }) {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const box = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e) => box.current && !box.current.contains(e.target) && setOpen(false);
+    const esc = (e) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", away);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("pointerdown", away);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [open]);
+  return (
+    <div className="umenu" ref={box}>
+      <button className={"ubtn" + (open ? " on" : "")} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <span className={"face me" + (isAdmin ? " adm" : "")}>{initials(username)}</span>
+        <span className="uname">{username}</span>
+        <Icon name="down" size={14} />
+      </button>
+      {open && (
+        <div className="udrop" role="menu">
+          <div className="uhead">
+            <span className={"face me big" + (isAdmin ? " adm" : "")}>{initials(username)}</span>
+            <div>
+              <b>{username}</b>
+              <small>{isAdmin ? t("Admin") : t("Ishchi")}</small>
+            </div>
+          </div>
+          <div className="usec">
+            <div className="ulabel">{t("Hozir tizimda")}</div>
+            <div className="uonline">
+              {online.map((n) => (
+                <span key={n}>
+                  <i className="dot d2" />
+                  {n}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="usec ulang">
+            <div className="ulabel">{t("Til")}</div>
+            <LangSwitch />
+          </div>
+          <button
+            className="uitem danger"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onLogout();
+            }}
+          >
+            <Icon name="logout" size={15} />
+            {t("Chiqish")}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
