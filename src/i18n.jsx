@@ -132,6 +132,8 @@ const D = {
   "⤡ Kichraytirish": ["⤡ Свернуть", "⤡ Collapse"],
   "Hamma ishni kattalashtirish": ["Развернуть все работы", "Expand all jobs"],
   "Hamma ishni kichraytirish": ["Свернуть все работы", "Collapse all jobs"],
+  "Hamma mijozni kattalashtirish": ["Развернуть всех клиентов", "Expand all customers"],
+  "Hamma mijozni kichraytirish": ["Свернуть всех клиентов", "Collapse all customers"],
   "Kattalashtirish": ["Увеличить", "Expand"],
   "Kichraytirish": ["Свернуть", "Collapse"],
   "Detallar kvadrati (m²)": ["Площадь деталей (м²)", "Parts area (m²)"],
