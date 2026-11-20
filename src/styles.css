@@ -228,6 +228,7 @@ header,.toolbar,main,.page{padding-left:max(20px,env(safe-area-inset-left,0px));
 .ic.done:hover:not(:disabled){background:#15603a;color:#fff;border-color:#15603a}
 .arch-bar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .arch-bar input[type=search]{max-width:280px}
+.arch-bar select{max-width:220px}
 .arch-count{color:var(--mute);font-size:13px}
 
 /* Slim, soft scrollbars */

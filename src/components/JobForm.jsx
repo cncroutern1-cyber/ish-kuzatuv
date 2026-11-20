@@ -7,7 +7,7 @@ import { sb } from "../supabase.js";
 
 const MATERIALS = ["LDSP", "MDF", "Massiv", "Fanera"];
 
-export default function JobForm({ job, isAdmin, username, customers, materialPrices = {}, onSaveMaterialPrice, onSave, onDelete, onClose }) {
+export default function JobForm({ job, isAdmin, username, customers, materialPrices = {}, onSaveMaterialPrice, onSave, onDelete, onClose, readOnly = false }) {
   const t = useT();
   // Older jobs may have only a typed-in price: they open in "manual" mode so the price is never lost.
   const legacy = !!job && (job.price || 0) > 0 && !(job.rate > 0);
@@ -157,7 +157,8 @@ export default function JobForm({ job, isAdmin, username, customers, materialPri
   }
 
   return (
-    <Modal title={job ? t("Ishni tahrirlash") : t("Yangi ish")} onClose={onClose}>
+    <Modal title={readOnly ? t("Ish tafsilotlari") : job ? t("Ishni tahrirlash") : t("Yangi ish")} onClose={onClose}>
+      <fieldset disabled={readOnly} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
       <div className="f">
         <label htmlFor="fTitle">{t("Ish nomi")}</label>
         <input id="fTitle" type="text" value={f.title} onChange={set("title")} placeholder={t("Masalan: Oshxona eshiklari 3D")} autoFocus />
@@ -433,23 +434,28 @@ export default function JobForm({ job, isAdmin, username, customers, materialPri
           )}
         </div>
       </div>
+      </fieldset>
 
       <div className="mbtns">
-        {job && isAdmin && (
+        {!readOnly && job && isAdmin && (
           <button className="btn danger" onClick={() => onDelete(job)}>
             {t("O'chirish")}
           </button>
         )}
         <span className="sp" />
         <button className="btn" onClick={onClose}>
-          {t("Bekor qilish")}
+          {readOnly ? t("Yopish") : t("Bekor qilish")}
         </button>
-        <button className="btn" onClick={() => submit(true)}>
-          {t("PDF yuklab olish")}
-        </button>
-        <button className="btn primary" onClick={() => submit()}>
-          {t("Saqlash")}
-        </button>
+        {!readOnly && (
+          <button className="btn" onClick={() => submit(true)}>
+            {t("PDF yuklab olish")}
+          </button>
+        )}
+        {!readOnly && (
+          <button className="btn primary" onClick={() => submit()}>
+            {t("Saqlash")}
+          </button>
+        )}
       </div>
     </Modal>
   );

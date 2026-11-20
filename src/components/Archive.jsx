@@ -11,6 +11,7 @@ export default function Archive({ data, isAdmin, username }) {
   const t = useT();
   const { jobs, customers, saveJob, removeJob, savePhone } = data;
   const [q, setQ] = useState("");
+  const [cust, setCust] = useState("");
   const [form, setForm] = useState(null);
   const [confirm, setConfirm] = useState(null);
   const [bigImg, setBigImg] = useState(null);
@@ -46,8 +47,10 @@ export default function Archive({ data, isAdmin, username }) {
   };
 
   const query = q.trim().toLowerCase();
+  const custNames = [...new Set(jobs.filter((j) => j.stage === 4).map((j) => j.customer || ""))].sort((a, b) => a.localeCompare(b));
   const list = jobs
     .filter((j) => j.stage === 4)
+    .filter((j) => !cust || (j.customer || "") === (cust === "__none" ? "" : cust))
     .filter((j) => !query || (j.title + " " + j.customer + " " + (j.material || "")).toLowerCase().includes(query))
     .sort((a, b) => (b.done || "").localeCompare(a.done || "") || b.pos - a.pos);
   const total = jobs.filter((j) => j.stage === 4).length;
@@ -83,8 +86,16 @@ export default function Archive({ data, isAdmin, username }) {
     <Page title={t("Tugatilgan ishlar")}>
       <div className="arch-bar">
         <input type="search" placeholder={t("Qidirish...")} aria-label={t("Qidirish")} value={q} onChange={(e) => setQ(e.target.value)} />
+        <select value={cust} onChange={(e) => setCust(e.target.value)} aria-label={t("Mijoz bo'yicha filtr")}>
+          <option value="">{t("Hamma mijozlar")}</option>
+          {custNames.map((n) => (
+            <option key={n || "__none"} value={n || "__none"}>
+              {n || t("Mijozsiz")}
+            </option>
+          ))}
+        </select>
         <span className="arch-count">
-          {t("{0} ta ish", total)}
+          {cust || query ? list.length + " / " + total + " " + t("ta ish") : t("{0} ta ish", total)}
           {avg !== null && " · " + t("O'rtacha: {0} kun", avg)}
         </span>
         <button className="btn" onClick={toggleAll} title={allSmall ? t("Hamma ishni kattalashtirish") : t("Hamma ishni kichraytirish")}>
@@ -108,7 +119,7 @@ export default function Archive({ data, isAdmin, username }) {
           if (small)
             return (
               <div className="card mini" key={j.id + "-c"}>
-                <div className="txt">
+                <div className="txt" style={{ cursor: "pointer" }} onClick={() => setForm({ job: j, readOnly: !canEdit(j, isAdmin, username) })}>
                   <div className="title">{j.title}</div>
                   <div className="cust">
                     {[j.customer, t("Tugagan: {0}", j.done || "—"), daysTaken(j) !== null ? "⏱ " + daysTaken(j) + " " + t("kun") : ""]
@@ -134,7 +145,7 @@ export default function Archive({ data, isAdmin, username }) {
                 <span style={{ marginLeft: "auto" }}>{t("Tugagan: {0}", j.done || "—")}</span>
               </div>
               <div className="mid">
-                <div className="txt">
+                <div className="txt" style={{ cursor: "pointer" }} onClick={() => setForm({ job: j, readOnly: !canEdit(j, isAdmin, username) })}>
                   <div className="title">{j.title}</div>
                   <div className="cust">{j.customer || "—"}</div>
                 </div>
@@ -156,14 +167,20 @@ export default function Archive({ data, isAdmin, username }) {
                 </div>
               )}
               {!canEdit(j, isAdmin, username) ? (
-                <div className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}</div>
+                <div className="acts">
+                  <span className="meta lockmsg">🔒 {t("Faqat {0} o'zgartira oladi", j.createdBy || "admin")}</span>
+                  <span className="sep" />
+                  <button className="ic" onClick={() => setForm({ job: j, readOnly: true })} title={t("Tafsilotlarni ko'rish")}>
+                    👁 {t("Ko'rish")}
+                  </button>
+                </div>
               ) : (
               <div className="acts">
                 <button className="ic" onClick={() => restore(j)} title={t("Tayyor ustuniga qaytarish")}>
                   <Icon name="left" /> {t("Qaytarish")}
                 </button>
                 <span className="sep" />
-                <button className="ic" aria-label={t("Tahrirlash")} title={t("Tahrirlash")} onClick={() => setForm({ job: j })}>
+                <button className="ic" aria-label={t("Tahrirlash")} title={t("Tahrirlash")} onClick={() => setForm({ job: j, readOnly: false })}>
                   <Icon name="edit" />
                 </button>
                 {isAdmin && (
@@ -182,6 +199,7 @@ export default function Archive({ data, isAdmin, username }) {
         <JobForm
           key={form.job.id}
           job={form.job}
+          readOnly={form.readOnly}
           isAdmin={isAdmin}
           username={username}
           customers={customers}

@@ -168,6 +168,13 @@ const D = {
   "Olib tashlash": ["Убрать", "Remove"],
   "Rasm": ["Фото", "Image"],
   // Archive
+  "Ish tafsilotlari": ["Детали работы", "Job details"],
+  "Hamma mijozlar": ["Все клиенты", "All customers"],
+  "Mijozsiz": ["Без клиента", "No customer"],
+  "Mijoz bo'yicha filtr": ["Фильтр по клиенту", "Filter by customer"],
+  "ta ish": ["раб.", "jobs"],
+  "Ko'rish": ["Смотреть", "View"],
+  "Tafsilotlarni ko'rish": ["Посмотреть детали", "View details"],
   "Hali tugatilgan ish yo'q. \"Tayyor\" ustunidagi ish kartasida ✓ tugmasini bossangiz, ish shu yerga o'tadi.": ["Завершённых работ пока нет. Нажмите ✓ на карточке в колонке «Готово», и работа попадёт сюда.", "No finished jobs yet. Press ✓ on a card in the Ready column and the job will move here."],
   "Tugagan: {0}": ["Завершено: {0}", "Finished: {0}"],
   "{0} ta ish": ["Работ: {0}", "{0} jobs"],
