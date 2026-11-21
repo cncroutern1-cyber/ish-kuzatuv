@@ -4,6 +4,7 @@ import { FALLBACK_USERS } from "../utils.js";
 import PasswordInput from "./PasswordInput.jsx";
 import { useT } from "../i18n.jsx";
 import LangSwitch from "./LangSwitch.jsx";
+import { InstallItem } from "./Install.jsx";
 import Mark from "./Mark.jsx";
 
 // Carved-wood lattice, drawn in SVG so the page needs no image file.
@@ -130,6 +131,7 @@ export default function Login() {
       }}
     >
       <LangSwitch className="login-lang" />
+      <InstallItem className="login-install" />
       <div className="login-shell">
         <aside className="login-brand" style={{ backgroundImage: GOLD_PATTERN }}>
           <div className="lb-inner">

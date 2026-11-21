@@ -421,3 +421,5 @@ header.topbar{flex:none;display:flex;flex-wrap:nowrap;align-items:center;gap:18p
   .btab.on .cnt{background:#c9a227;color:#2b1d12}
   .btab .cnt.red{background:#d9443a;color:#fff}
 }
+
+.inst-steps{margin:0 0 14px;padding-left:22px;line-height:1.7}.login-install{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.15);background:rgba(255,255,255,.92);color:#2b1d0e;border-radius:999px;padding:9px 14px;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.12)}

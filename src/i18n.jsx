@@ -167,6 +167,16 @@ const D = {
   "Rasm tanlash": ["Выбрать фото", "Choose image"],
   "Olib tashlash": ["Убрать", "Remove"],
   "Rasm": ["Фото", "Image"],
+  // Install
+  "Ilovani o'rnatish": ["Установить приложение", "Install the app"],
+  "Saytni Safari brauzerida oching.": ["Откройте сайт в Safari.", "Open the site in Safari."],
+  "Pastdagi “Ulashish” tugmasini (⬆︎) bosing.": ["Нажмите кнопку «Поделиться» (⬆︎) внизу.", "Tap the Share button (⬆︎) at the bottom."],
+  "“Bosh ekranga qo'shish” (Add to Home Screen) ni tanlang.": ["Выберите «На экран Домой» (Add to Home Screen).", "Choose “Add to Home Screen”."],
+  "“Qo'shish” ni bosing. Ilova bosh ekranda paydo bo'ladi.": ["Нажмите «Добавить». Приложение появится на главном экране.", "Tap “Add”. The app appears on your home screen."],
+  "Brauzer menyusini (⋮) oching.": ["Откройте меню браузера (⋮).", "Open the browser menu (⋮)."],
+  "“Ilovani o'rnatish” yoki “Bosh ekranga qo'shish” ni tanlang.": ["Выберите «Установить приложение» или «Добавить на главный экран».", "Choose “Install app” or “Add to Home screen”."],
+  "Tasdiqlang. Ilova bosh ekranda paydo bo'ladi.": ["Подтвердите. Приложение появится на главном экране.", "Confirm. The app appears on your home screen."],
+  "Tushunarli": ["Понятно", "Got it"],
   // Archive
   "Ish tafsilotlari": ["Детали работы", "Job details"],
   "Hamma mijozlar": ["Все клиенты", "All customers"],

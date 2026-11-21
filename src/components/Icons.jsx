@@ -8,6 +8,7 @@ const PATHS = {
   right: "M9 18l6-6-6-6",
   up: "M18 15l-6-6-6 6",
   down: "M6 9l6 6 6-6",
+  install: "M12 3v12M7 10l5 5 5-5M4 20h16",
   edit: "M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z",
   trash: "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6",
   check: "M20 6L9 17l-5-5",

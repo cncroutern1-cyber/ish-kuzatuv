@@ -11,6 +11,7 @@ import Users from "./Users.jsx";
 import { useT } from "../i18n.jsx";
 import Icon from "./Icons.jsx";
 import LangSwitch from "./LangSwitch.jsx";
+import { InstallItem } from "./Install.jsx";
 import Mark from "./Mark.jsx";
 import { daysLeft } from "../utils.js";
 
@@ -227,6 +228,7 @@ function UserMenu({ username, isAdmin, online, onLogout }) {
             <div className="ulabel">{t("Til")}</div>
             <LangSwitch />
           </div>
+          <InstallItem />
           <button
             className="uitem danger"
             role="menuitem"
